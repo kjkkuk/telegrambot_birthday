@@ -45,10 +45,14 @@ Telegram::Bot::Client.run(token) do |bot|
     when "who"
       #logic output
       birthdays = Birthday.where("birthday LIKE ?", "%#{time[0..-4]}%")
-      bot.api.send_message(chat_id: message.chat.id, text: "Happy Birthday")
+      #bot.api.send_message(chat_id: message.chat.id, text: "Happy Birthday")
       if !birthdays.size.zero?
         birthdays.each do |s_hb|
-          bot.api.send_message(chat_id: message.chat.id, text: "Happy Birthday #{s_hb.telegram_id}:#{s_hb.birthday}")
+          if s_hb.telegram_id == user.telegram_id
+            bot.api.send_message(chat_id: message.chat.id, text: "Happy Birthday #{user.name}")
+          else
+            bot.api.send_message(chat_id: message.chat.id, text: "smth wrong")
+          end
         end
       else
         bot.api.send_message(chat_id: message.chat.id, text: "Sorry, we can't find birthday boy")
