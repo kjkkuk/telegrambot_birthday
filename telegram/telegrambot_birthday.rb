@@ -2,7 +2,7 @@ require File.expand_path('../config/environment', __dir__)
 
 require 'telegram/bot'
 
-token = "1340950805:AAE3QYLPvYFvw3GbcWKroyogd_tE4C5r3ys"
+token = ENV["telegrambot_token"]
 
 time = Time.now.strftime("%d/%m/%y")
 
