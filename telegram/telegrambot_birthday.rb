@@ -4,7 +4,7 @@ require 'telegram/bot'
 
 token = ENV["telegrambot_token"]
 
-time = Time.now.strftime("%d/%m/%y")
+p time = Time.now.strftime("%d/%m/%y")
 
 Telegram::Bot::Client.run(token) do |bot|
   bot.listen do |message|
@@ -45,6 +45,10 @@ Telegram::Bot::Client.run(token) do |bot|
     when "who"
       #logic output
       birthdays = Birthday.where("birthday LIKE ?", "%#{time[0..-4]}%")
+      # p Birthday.where("birthday LIKE ?", "%#{time[0..-4]}%")
+      # p Birthday.where("DATE(date_first_payment) >= ?", Date.today - 1.day)
+      # p Birthday.where(birthday: Date.today.beginning_of_day..Date.today.end_of_day)
+      # p Birthday.where("DATE(created_at) = ?", Date.today).count
       #bot.api.send_message(chat_id: message.chat.id, text: "Happy Birthday")
       if !birthdays.size.zero?
         birthdays.each do |s_hb|
