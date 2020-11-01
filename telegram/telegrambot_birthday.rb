@@ -4,7 +4,6 @@ require 'telegram/bot'
 
 token = ENV["telegrambot_token"]
 
-p time = Time.now.strftime("%d/%m/%y")
 
 Telegram::Bot::Client.run(token) do |bot|
   bot.listen do |message|
@@ -44,23 +43,18 @@ Telegram::Bot::Client.run(token) do |bot|
       user.save
     when "who"
       #logic output
-      birthdays = Birthday.where("birthday LIKE ?", "%#{time[0..-4]}%")
-      # p Birthday.where("birthday LIKE ?", "%#{time[0..-4]}%")
-      # p Birthday.where("DATE(date_first_payment) >= ?", Date.today - 1.day)
-      # p Birthday.where(birthday: Date.today.beginning_of_day..Date.today.end_of_day)
-      # p Birthday.where("DATE(created_at) = ?", Date.today).count
-      #bot.api.send_message(chat_id: message.chat.id, text: "Happy Birthday")
+      birthdays = Birthday.where("extract(month from birthday) = ? AND extract(day from birthday) = ?", Time.now.month, Time.now.day)
       if !birthdays.size.zero?
-        birthdays.each do |s_hb|
-          if s_hb.telegram_id == user.telegram_id
-            bot.api.send_message(chat_id: message.chat.id, text: "Happy Birthday #{user.name}")
-          else
-            bot.api.send_message(chat_id: message.chat.id, text: "smth wrong")
-          end
-        end
-      else
-        bot.api.send_message(chat_id: message.chat.id, text: "Sorry, we can't find birthday boy")
-      end
+       birthdays.each do |s_hb|
+         if s_hb.telegram_id == user.telegram_id
+           bot.api.send_message(chat_id: message.chat.id, text: "Happy Birthday #{user.name}")
+         else
+           bot.api.send_message(chat_id: message.chat.id, text: "smth wrong")
+         end
+       end
+     else
+       bot.api.send_message(chat_id: message.chat.id, text: "Sorry, we can't find birthday boy")
+     end
       user.act = nil
       user.save
     end
